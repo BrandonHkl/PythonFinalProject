@@ -3,9 +3,11 @@ import imutils
 import numpy as np
 
 image = cv2.imread("map.png")
+finalImage = np.zeros_like(image)
+
 # image = image.resize((996, 629))
-#cv2.imshow("Map", image)
-#cv2.waitKey(0)
+cv2.imshow("Map", image)
+cv2.waitKey(0)
 
 # blurred = cv2.blur(image, (3, 3))
 # cv2.imshow("Blurred", blurred)
@@ -59,21 +61,23 @@ for i in range(1, 51):
     lowerBGR = np.array([blue, green, red])
     upperBGR = np.array([blue , green, red])
     mask = cv2.inRange(image, lowerBGR, upperBGR)
-    cv2.imshow("Mask", mask)
-    cv2.waitKey(0)
-    
+    # cv2.imshow("Mask", mask)
+    # cv2.waitKey(0)
+
     cv2.destroyAllWindows()
 
     edgedMask = cv2.Canny(mask, 30, 150)
-    cv2.imshow("Edge Detection", edgedMask)
-    cv2.waitKey(0)
-
-    # contoursMask = cv2.findContours(edgedMask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # contoursMask = imutils.grab_contours(contoursMask)
-
-    # filled = cv2.fillPoly(edgedMask, pts = contoursMask, color=(125, 93, 67))
-    # filled = cv2.cvtColor(filled, cv2.COLOR_GRAY2RGB)
-    # cv2.imshow("Filled", np.array(image) + filled)
+    # cv2.imshow("Edge Detection", edgedMask)
     # cv2.waitKey(0)
 
+    contoursMask = cv2.findContours(edgedMask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contoursMask = imutils.grab_contours(contoursMask)
+
+    filled = cv2.fillPoly(edgedMask, pts = contoursMask, color = (255, 0, 0))
+    filled = cv2.cvtColor(filled, cv2.COLOR_GRAY2BGR)
+
+    finalImage = finalImage + filled
+
+cv2.imshow("Final", finalImage)
+cv2.waitKey(0)
 cv2.destroyAllWindows()
